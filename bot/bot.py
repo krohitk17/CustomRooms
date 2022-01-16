@@ -8,13 +8,12 @@ from cogs import events
 
 bot = commands.Bot(command_prefix=cl.getPrefix, case_insensitive='True')
 
-bot.add_cog(events.Events(bot))
-bot.add_cog(add.Add(bot))
-bot.add_cog(remove.Remove(bot))
-bot.add_cog(settings.Settings(bot))
-
 if __name__ == '__main__':
     try:
+        bot.add_cog(events.Events(bot))
+        bot.add_cog(add.Add(bot))
+        bot.add_cog(remove.Remove(bot))
+        bot.add_cog(settings.Settings(bot))
         bot.run(cr.TOKEN)
     except:
         print('Invalid Token')
