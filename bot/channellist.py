@@ -10,7 +10,6 @@ class guild_list():
         self.new_channels = dict()
         self.roomcategory = str()
         self.roomname = '%USERNAME%\'s Room'
-        self.bindcategory = list()
 
 
 global guilds, path
@@ -47,7 +46,6 @@ def load_server(guild):
             guilds.new_channels = guild['new_channels']
             guilds.roomcategory = guild['roomcategory']
             guilds.roomname = guild['roomname']
-            guilds.bindcategory = guild['bindcategory']
 
 
 def getPrefix(bot, message):

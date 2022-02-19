@@ -46,12 +46,3 @@ class Events(commands.Cog):
             cl.guilds.new_channels.pop(channel.id)
         if channel.id == cl.guilds.roomcategory:
             cl.guilds.roomcategory = None
-        if channel.id in cl.guilds.bindcategory:
-            cl.guilds.bindcategory.remove(channel.id)
-
-    @commands.Cog.listener()
-    async def on_guild_channel_create(self, channel):
-        await asyncio.sleep(2)
-        if channel.category.id in cl.guilds.bindcategory:
-            if channel.id not in cl.guilds.new_channels.keys():
-                cl.guilds.channels.append(channel.id)

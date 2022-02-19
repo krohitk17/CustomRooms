@@ -99,17 +99,13 @@ class Settings(commands.Cog):
     @commands.command(name='config')
     async def config(self, ctx):
         embed = discord.Embed(title='Configuration')
-        channels = cl.guilds .channels
-        categories = cl.guilds .bindcategory
+        channels = cl.guilds.channels
         if not channels:
             embed.add_field(name=None, value='No channels in configuration')
             embed.colour = discord.Colour.red()
         else:
             embed.add_field(name='Channels', value='\n'.join([f'`{x.name}` - `{x.category}`' for x in [
                             discord.utils.get(ctx.guild.voice_channels, id=int(y)) for y in channels]]), inline=False)
-        if categories:
-            embed.add_field(name='Binded Categories', value='\n'.join([f'`{x.name}`' for x in [
-                            discord.utils.get(ctx.guild.categories, id=int(y)) for y in categories]]))
         if cl.guilds .roomcategory:
             embed.add_field(
                 name='Room Category', value=f'`{discord.utils.get(ctx.guild.categories,id = cl.guilds .roomcategory).name}`')

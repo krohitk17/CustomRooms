@@ -83,29 +83,3 @@ class Remove(commands.Cog):
             embed.colour = discord.Colour.blue()
             await ctx.send(embed=embed)
         await ctx.invoke(self.bot.get_command('config'))
-
-    @commands.command(name='rmbind')
-    async def rmbindcat(self, ctx, *args):
-        embed = discord.Embed(title='Remove Bind Category')
-        if len(args) > 1 or len(args) == 0 or not ''.join(args).isnumeric():
-            embed.add_field(
-                name='Error', value=f'Please enter a valid category ID')
-            embed.colour = discord.Colour.red()
-        else:
-            category = int(args[0])
-            cat = discord.utils.get(ctx.guild.categories, id=category)
-            if not cat:
-                embed.add_field(
-                    name='Error', value=f'Category `{category}` not found')
-                embed.colour = discord.Colour.red()
-            elif cat.id not in cl.guilds .bindcategory:
-                embed.add_field(
-                    name='Error', value=f'Category `{cat.name}` is already not binded')
-                embed.colour = discord.Colour.red()
-            else:
-                cl.guilds .bindcategory.remove(int(cat.id))
-                embed.add_field(name='Removed Bind Category',
-                                value=f'Category `{cat.name}` removed from binded categories')
-                embed.colour = discord.Colour.blue()
-        await ctx.send(embed=embed)
-        await ctx.invoke(self.bot.get_command('config'))

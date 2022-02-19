@@ -57,28 +57,3 @@ class Add(commands.Cog):
                 embed.colour = discord.Colour.blue()
         await ctx.send(embed=embed)
         await ctx.invoke(self.bot.get_command('config'))
-
-    @commands.command(name='bind')
-    async def bindcat(self, ctx, *args):
-        embed = discord.Embed(title='Bind Category')
-        if len(args) > 1 or len(args) == 0 or not ''.join(args).isnumeric():
-            embed.add_field(
-                name='Error', value=f'Please enter a valid category ID')
-        else:
-            category = int(args[0])
-            cat = discord.utils.get(ctx.guild.categories, id=category)
-            if not cat:
-                embed.add_field(
-                    name='Error', value=f'Category `{category}` not found')
-            elif cat in cl.guilds .bindcategory:
-                embed.add_field(
-                    name='Error', value=f'Category `{cat.name}` is already binded')
-            else:
-                cl.guilds .bindcategory.append(cat.id)
-                for i in ctx.guild.voice_channels:
-                    if i.category == cat:
-                        cl.guilds .channels.append(int(i.id))
-                embed.add_field(
-                    name='Binded Channel', value=f'All voice channels inside `{cat.name}` will be added to configuration')
-        await ctx.send(embed=embed)
-        await ctx.invoke(self.bot.get_command('config'))
