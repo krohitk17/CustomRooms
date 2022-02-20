@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
-import channellist as cl
 import asyncio
+import data
 
 
 class Remove(commands.Cog):
@@ -22,8 +22,8 @@ class Remove(commands.Cog):
                 embed.add_field(
                     name='Error', value=f'Channel `{channel}` not found')
                 embed.colour = discord.Colour.red()
-            elif ch.id in cl.guilds .channels:
-                cl.guilds .channels.remove(int(ch.id))
+            elif ch.id in data.guild.channels:
+                data.guild.channels.remove(int(ch.id))
                 embed.add_field(
                     name='Channel', value=f'`{ch.name}` removed from Configuration')
                 embed.colour = discord.Colour.blue()
@@ -51,7 +51,7 @@ class Remove(commands.Cog):
             else:
                 for i in ctx.guild.voice_channels:
                     if i.category == cat:
-                        cl.guilds .channels.remove(int(i.id))
+                        data.guild.channels.remove(int(i.id))
                 embed.add_field(
                     name='Removed Category', value=f'All voice channels inside `{cat.name}` removed from configuration')
                 embed.colour = discord.Colour.blue()
@@ -77,7 +77,8 @@ class Remove(commands.Cog):
             embed.colour = discord.Colour.red()
             await ctx.send(embed=embed)
         else:
-            cl.guilds = cl.guild_list()
+            data.removeserver(ctx.guild.id)
+            data.guild = data.newserver(ctx.guild.id)
             embed = discord.Embed(title='Remove Configuration',
                                   description='All data removed from configuration')
             embed.colour = discord.Colour.blue()

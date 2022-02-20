@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
-import channellist as cl
-import customrooms as cr
+import data
 
 
 class Settings(commands.Cog):
@@ -33,13 +32,13 @@ class Settings(commands.Cog):
                 embed = discord.Embed(
                     title='Removed Room Category', description=f'**`{cat.name}`**')
                 embed.colour = discord.Colour.blue()
-                cl.guilds .roomcat = None
-            elif cat == cl.guilds .roomcat:
+                data.guild.roomcat = None
+            elif cat == data.guild.roomcat:
                 embed.add_field(
                     name='Error', value=f'Category `{category}` is already Room Category')
                 embed.colour = discord.Colour.red()
             else:
-                cl.guilds .roomcat = cat.id
+                data.guild.roomcat = cat.id
                 embed.add_field(name='Changed Room Category',
                                 value=f'`{cat.name}`')
                 embed.colour = discord.Colour.blue()
@@ -55,42 +54,42 @@ class Settings(commands.Cog):
         else:
             roomname = ' '.join(args)
             if roomname == 'default':
-                cl.guilds .roomname = '%USERNAME%\'s Room'
+                data.guild.roomname = '%USERNAME%\'s Room'
             else:
-                cl.guilds .roomname = roomname
+                data.guild.roomname = roomname
             embed.add_field(name='Changed Room Name',
-                            value=f'Room name changed to `{cl.guilds .roomname}`')
+                            value=f'Room name changed to `{data.guild.roomname}`')
             embed.colour = discord.Colour.blue()
         await ctx.send(embed=embed)
 
     @commands.command(name='lock')
     async def lockroom(self, ctx):
         embed = discord.Embed(title='Lock Room')
-        if not ctx.author.voice or ctx.author.voice.channel.id not in cl.guilds .new_channels.keys():
+        if not ctx.author.voice or str(ctx.author.voice.channel.id) not in data.guild.newchannels.keys():
             embed.add_field(
                 name='Error', value='You are not connected to any custom voice channel')
-        if ctx.author.voice.channel.id in cl.guilds .new_channels.keys():
-            if cl.guilds .new_channels[ctx.author.voice.channel.id]:
+        elif str(ctx.author.voice.channel.id) in data.guild.newchannels.keys():
+            if data.guild.newchannels[str(ctx.author.voice.channel.id)]:
                 embed.add_field(
-                    name='Room Unocked', value=f'Your room {ctx.author.voice.channel} is already locked')
+                    name='Room Locked', value=f'Your room {ctx.author.voice.channel} is already locked')
             else:
                 embed.add_field(
                     name='Room Locked', value=f'Your room {ctx.author.voice.channel} has been locked')
-            cl.guilds .roomname[ctx.author.voice.channel.id] = True
+                data.guild.newchannels[str(ctx.author.voice.channel.id)] = True
         await ctx.send(embed=embed)
 
     @commands.command(name='unlock')
     async def unlockroom(self, ctx):
         embed = discord.Embed(title='Unlock Room')
-        if not ctx.author.voice or ctx.author.voice.channel.id not in cl.guilds .new_channels.keys():
+        if not ctx.author.voice or ctx.author.voice.channel.id not in data.guild.newchannels.keys():
             embed.add_field(
                 name='Error', value='You are not connected to any custom voice channel')
         else:
-            if cl.guilds .roomname[int(ctx.author.voice.channel.id)]:
+            if data.guild.newchannels[str(ctx.author.voice.channel.id)]:
                 embed.add_field(
                     name='Room Unocked', value=f'Your room {ctx.author.voice.channel} has been unlocked')
-                cl.guilds .roomaname[
-                    int(ctx.author.voice.channel.id)] = False
+                data.guild.newchannels[
+                    str(ctx.author.voice.channel.id)] = False
             else:
                 embed.add_field(
                     name='Error', value=f'Your room {ctx.author.voice.channel} is already unlocked')
@@ -99,18 +98,18 @@ class Settings(commands.Cog):
     @commands.command(name='config')
     async def config(self, ctx):
         embed = discord.Embed(title='Configuration')
-        channels = cl.guilds.channels
+        channels = data.guild.channels
         if not channels:
             embed.add_field(name=None, value='No channels in configuration')
             embed.colour = discord.Colour.red()
         else:
             embed.add_field(name='Channels', value='\n'.join([f'`{x.name}` - `{x.category}`' for x in [
                             discord.utils.get(ctx.guild.voice_channels, id=int(y)) for y in channels]]), inline=False)
-        if cl.guilds .roomcategory:
+        if data.guild.roomcategory:
             embed.add_field(
-                name='Room Category', value=f'`{discord.utils.get(ctx.guild.categories,id = cl.guilds .roomcategory).name}`')
+                name='Room Category', value=f'`{discord.utils.get(ctx.guild.categories,id = data.guild.roomcategory).name}`')
         embed.add_field(name='Rooom Name',
-                        value=f'`{cl.guilds .roomname}`')
+                        value=f'`{data.guild.roomname}`')
         embed.colour = discord.Colour.blue()
         await ctx.send(embed=embed)
 
@@ -122,16 +121,16 @@ class Settings(commands.Cog):
             embed.colour = discord.Colour.red()
         else:
             prefix = str(args[0])
-            if prefix == cl.guilds .prefix:
+            if prefix == data.guild.prefix:
                 embed.add_field(
                     name='Error', value=f'{prefix} is already set prefix')
                 embed.colour = discord.Colour.red()
             else:
                 if prefix == 'default':
-                    prefix = cr.PREFIX
-                    cl.guilds .prefix = prefix
+                    prefix = '+cr'
+                    data.guild.prefix = prefix
                 else:
-                    cl.guilds .prefix = prefix
+                    data.guild.prefix = prefix
                 embed.add_field(name='Changed Prefix',
                                 value=f'{prefix} has been set as bot prefix')
                 embed.colour = discord.Colour.blue()

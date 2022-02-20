@@ -1,6 +1,7 @@
 from discord.ext import commands
-import channellist as cl
-import asyncio
+import data
+import database as db
+import models
 
 
 class Events(commands.Cog):
@@ -10,39 +11,54 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print(f'{self.bot.user.name} has connected to Discord!')
+        session = db.localsession()
+        guilds = session.query(models.guild).all()
+        for guild in self.bot.guilds:
+            if guild.id not in guilds:
+                data.newserver(guild.id)
+        session.close()
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
-        cl.new_server(guild)
+        data.newserver(guild.id)
+
+    @commands.Cog.listener()
+    async def on_guild_remove(self, guild):
+        data.removeserver(guild.id)
 
     @commands.Cog.listener()
     async def on_command_completion(self, ctx):
-        cl.update_server(ctx.guild)
+        data.updateserver(data.guild)
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
+        guild = data.getserver(member.guild.id)
         if after.channel:
-            if after.channel.id in cl.guilds.channels:
-                cat = cl.guilds.roomcategory
+            if after.channel.id in guild.channels:
+                cat = guild.roomcategory
                 if not cat:
                     cat = after.channel.category
-                roomname = cl.guilds.roomname.replace(
+                roomname = guild.roomname.replace(
                     '%USERNAME%', f'{member.name}')
                 ch = await member.guild.create_voice_channel(name=roomname, category=cat)
-                cl.guilds.new_channels[ch.id] = False
+                guild.newchannels[str(ch.id)] = False
                 await member.move_to(ch)
-            if after.channel.id in cl.guilds.new_channels.keys():
-                if cl.guilds.new_channels[after.channel.id]:
+            if str(after.channel.id) in guild.newchannels.keys():
+                print('someone joined')
+                if guild.newchannels[str(after.channel.id)]:
+                    print('someone kicked')
                     await member.move_to(None)
         if before.channel:
-            if before.channel.id in cl.guilds.new_channels.keys() and not before.channel.members:
+            if str(before.channel.id) in guild.newchannels.keys() and not before.channel.members:
                 await before.channel.delete()
+                guild.newchannels.pop(str(before.channel.id))
+        data.updateserver(guild)
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel):
-        if channel.id in cl.guilds.channels:
-            cl.guilds.channels.remove(channel.id)
-        if channel.id in cl.guilds.new_channels.keys():
-            cl.guilds.new_channels.pop(channel.id)
-        if channel.id == cl.guilds.roomcategory:
-            cl.guilds.roomcategory = None
+        guild = data.getserver(channel.guild.id)
+        if channel.id in guild.channels:
+            guild.channels.remove(channel.id)
+        if channel.id == guild.roomcategory:
+            guild.roomcategory = None
+        data.updateserver(guild)
