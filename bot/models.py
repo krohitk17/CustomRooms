@@ -22,7 +22,7 @@ class guild(base):
         self.roomname = roomname
 
     def __repr__(self):
-        return self.id
+        return str(self.id)
 
     @property
     def serialize(self):

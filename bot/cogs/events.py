@@ -12,9 +12,10 @@ class Events(commands.Cog):
     async def on_ready(self):
         print(f'{self.bot.user.name} has connected to Discord!')
         session = db.localsession()
-        guilds = session.query(models.guild).all()
+        guilds = [guild.id for guild in session.query(models.guild).all()]
         for guild in self.bot.guilds:
             if guild.id not in guilds:
+                print(f'adding {guild.id}')
                 data.newserver(guild.id)
         session.close()
 
@@ -44,9 +45,7 @@ class Events(commands.Cog):
                 guild.newchannels[str(ch.id)] = False
                 await member.move_to(ch)
             if str(after.channel.id) in guild.newchannels.keys():
-                print('someone joined')
                 if guild.newchannels[str(after.channel.id)]:
-                    print('someone kicked')
                     await member.move_to(None)
         if before.channel:
             if str(before.channel.id) in guild.newchannels.keys() and not before.channel.members:

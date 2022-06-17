@@ -61,7 +61,7 @@ class Remove(commands.Cog):
     @commands.command(name='rmconfig')
     async def rmconfig(self, ctx):
         def check(reaction, user):
-            return user == ctx.author and reaction.emoji == '🇾'
+            return user == ctx.author and reaction.emoji == "🇾",
         embed = discord.Embed(title='Remove Configuration')
         embed.add_field(name='Are You Sure?',
                         value='This will remove all configuration for the server.')
@@ -70,7 +70,8 @@ class Remove(commands.Cog):
         for i in ["🇾", "🇳"]:
             await message.add_reaction(i)
         try:
-            await self.bot.wait_for('reaction_add', timeout=30.0, check=check)
+            reaction = await self.bot.wait_for('reaction_add', timeout=30.0, check=check)
+            print(reaction)
         except asyncio.TimeoutError:
             embed = discord.Embed(
                 title='Remove Configuration', description='Timed Out')

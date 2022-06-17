@@ -5,10 +5,10 @@ global guild
 guild = None
 
 
-def newserver(server):
+def newserver(serverid):
     session = db.localsession()
     guild = models.guild(
-        id=server,
+        id=serverid,
         prefix='+cr',
         channels=[],
         new_channels={},
@@ -17,6 +17,7 @@ def newserver(server):
     )
     session.add(guild)
     session.commit()
+    session.expunge(guild)
     session.close()
     return guild
 
@@ -30,19 +31,21 @@ def updateserver(server):
     guild.roomcategory = server.roomcategory
     guild.roomname = server.roomname
     session.commit()
+    session.expunge(guild)
     session.close()
 
 
-def removeserver(server):
+def removeserver(serverid):
     session = db.localsession()
-    guild = session.query(models.guild).filter_by(id=server).first()
+    guild = session.query(models.guild).filter_by(id=serverid).first()
     session.delete(guild)
     session.commit()
     session.close()
 
 
-def getserver(server):
+def getserver(serverid):
     session = db.localsession()
-    guild = session.query(models.guild).filter_by(id=server).first()
+    guild = session.query(models.guild).filter_by(id=serverid).first()
+    session.expunge(guild)
     session.close()
     return guild
