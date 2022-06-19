@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from sqlalchemy import desc
 import data
 
 
@@ -8,7 +9,7 @@ class Add(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name='add')
+    @commands.command(name='add', description='Add a channel to configuration', usage='add <channel_id>')
     async def addchannel(self, ctx, *args):
         embed = discord.Embed(title='Add Channel')
         if len(args) > 1 or len(args) == 0 or not ''.join(args).isnumeric():
@@ -34,7 +35,7 @@ class Add(commands.Cog):
         await ctx.send(embed=embed)
         await ctx.invoke(self.bot.get_command('config'))
 
-    @commands.command(name='addcat')
+    @commands.command(name='addcat', description='Add a category to configuration', usage='addcat <category_id>')
     async def addcat(self, ctx, *args):
         embed = discord.Embed(title='Add Category')
         if len(args) > 1 or len(args) == 0 or not ''.join(args).isnumeric():

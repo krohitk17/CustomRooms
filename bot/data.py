@@ -12,14 +12,13 @@ def newserver(serverid):
         prefix='+cr',
         channels=[],
         new_channels={},
-        roomcategory=None,
+        roomcat=None,
         roomname='%USERNAME%\'s Room'
     )
     session.add(guild)
     session.commit()
     session.expunge(guild)
     session.close()
-    return guild
 
 
 def updateserver(server):
@@ -28,7 +27,7 @@ def updateserver(server):
     guild.prefix = server.prefix
     guild.channels = server.channels
     guild.newchannels = server.newchannels
-    guild.roomcategory = server.roomcategory
+    guild.roomcat = server.roomcat
     guild.roomname = server.roomname
     session.commit()
     session.expunge(guild)

@@ -8,13 +8,32 @@ class Settings(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name='ping')
+    @commands.command(name='ping', description='Pong!', hidden=True)
     async def ping(self, ctx):
         embed = discord.Embed(
             title='Ping', description=f'{int(self.bot.latency*100)} ms')
         await ctx.send(embed=embed)
 
-    @commands.command(name='roomcat')
+    @commands.command(name='help', description='List all commands. Use help [command] for specific command.', usage='help <command>')
+    async def help(self, ctx, *args):
+        embed = discord.Embed(title='Help')
+        embed.color = discord.Colour.blue()
+        if len(args) == 0:
+            for command in self.bot.commands:
+                print(command.name, command.description)
+                embed.add_field(name=f'`{command.name}`',
+                                value=command.description, inline=False)
+        else:
+            for command in self.bot.commands:
+                if command.name == args[0]:
+                    embed.add_field(name=f'`{command.name}`',
+                                    value=command.description, inline=False)
+                    embed.add_field(
+                        name='Usage', value=command.usage, inline=False)
+                    break
+        await ctx.send(embed=embed)
+
+    @commands.command(name='roomcat', description='Set the room category', usage='roomcat <category_id>')
     async def roomcat(self, ctx, *args):
         embed = discord.Embed(title='Room Category')
         if len(args) > 1 or len(args) == 0:
@@ -22,8 +41,8 @@ class Settings(commands.Cog):
                 name='Error', value=f'Please enter a valid category ID')
             embed.colour = discord.Colour.red()
         else:
-            category = int(args[0])
-            cat = discord.utils.get(ctx.guild.categories, id=category)
+            category = args[0]
+            cat = discord.utils.get(ctx.guild.categories, id=int(category))
             if not cat:
                 embed.add_field(
                     name='Error', value=f'Category `{category}` not found')
@@ -45,7 +64,7 @@ class Settings(commands.Cog):
         await ctx.send(embed=embed)
         await ctx.invoke(self.bot.get_command('config'))
 
-    @commands.command(name='roomname')
+    @commands.command(name='roomname', description='Set the name of the room', usage='roomname <name>')
     async def roomname(self, ctx, *args):
         embed = discord.Embed(title='Room Name')
         if len(args) == 0:
@@ -54,7 +73,7 @@ class Settings(commands.Cog):
         else:
             roomname = ' '.join(args)
             if roomname == 'default':
-                data.guild.roomname = '%USERNAME%\'s Room'
+                data.guild.roomname = 'Room'
             else:
                 data.guild.roomname = roomname
             embed.add_field(name='Changed Room Name',
@@ -62,7 +81,7 @@ class Settings(commands.Cog):
             embed.colour = discord.Colour.blue()
         await ctx.send(embed=embed)
 
-    @commands.command(name='lock')
+    @commands.command(name='lock', description='Lock the room', usage='lock (while room is joined)')
     async def lockroom(self, ctx):
         embed = discord.Embed(title='Lock Room')
         if not ctx.author.voice or str(ctx.author.voice.channel.id) not in data.guild.newchannels.keys():
@@ -78,7 +97,7 @@ class Settings(commands.Cog):
                 data.guild.newchannels[str(ctx.author.voice.channel.id)] = True
         await ctx.send(embed=embed)
 
-    @commands.command(name='unlock')
+    @commands.command(name='unlock', description='Unlock the room', usage='unlock (while room is joined)')
     async def unlockroom(self, ctx):
         embed = discord.Embed(title='Unlock Room')
         if not ctx.author.voice or ctx.author.voice.channel.id not in data.guild.newchannels.keys():
@@ -95,7 +114,7 @@ class Settings(commands.Cog):
                     name='Error', value=f'Your room {ctx.author.voice.channel} is already unlocked')
         await ctx.send(embed=embed)
 
-    @commands.command(name='config')
+    @commands.command(name='config', description='Show bot configuration for the server', usage='config')
     async def config(self, ctx):
         embed = discord.Embed(title='Configuration')
         channels = data.guild.channels
@@ -105,15 +124,15 @@ class Settings(commands.Cog):
         else:
             embed.add_field(name='Channels', value='\n'.join([f'`{x.name}` - `{x.category}`' for x in [
                             discord.utils.get(ctx.guild.voice_channels, id=int(y)) for y in channels]]), inline=False)
-        if data.guild.roomcategory:
+        if data.guild.roomcat:
             embed.add_field(
-                name='Room Category', value=f'`{discord.utils.get(ctx.guild.categories,id = data.guild.roomcategory).name}`')
+                name='Room Category', value=f'`{discord.utils.get(ctx.guild.categories, id = data.guild.roomcat).name}`')
         embed.add_field(name='Rooom Name',
                         value=f'`{data.guild.roomname}`')
         embed.colour = discord.Colour.blue()
         await ctx.send(embed=embed)
 
-    @commands.command(name='setprefix')
+    @commands.command(name='prefix', description='Set the prefix for the server', usage='prefix <prefix>')
     async def setprefix(self, ctx, *args):
         embed = discord.Embed(title='Change Prefix')
         if len(args) > 1 or len(args) == 0:

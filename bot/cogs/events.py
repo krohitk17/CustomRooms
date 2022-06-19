@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 import data
 import database as db
@@ -36,12 +37,13 @@ class Events(commands.Cog):
         guild = data.getserver(member.guild.id)
         if after.channel:
             if after.channel.id in guild.channels:
-                cat = guild.roomcategory
+                cat = discord.utils.get(
+                    member.guild.categories, id=guild.roomcat)
                 if not cat:
                     cat = after.channel.category
                 roomname = guild.roomname.replace(
                     '%USERNAME%', f'{member.name}')
-                ch = await member.guild.create_voice_channel(name=roomname, category=cat)
+                ch = await member.guild.create_voice_channel(name=roomname, category=cat, overwrites=after.channel.overwrites, user_limit=after.channel.user_limit)
                 guild.newchannels[str(ch.id)] = False
                 await member.move_to(ch)
             if str(after.channel.id) in guild.newchannels.keys():
@@ -58,6 +60,6 @@ class Events(commands.Cog):
         guild = data.getserver(channel.guild.id)
         if channel.id in guild.channels:
             guild.channels.remove(channel.id)
-        if channel.id == guild.roomcategory:
-            guild.roomcategory = None
+        if channel.id == guild.roomcat:
+            guild.roomcat = None
         data.updateserver(guild)

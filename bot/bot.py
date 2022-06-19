@@ -2,6 +2,7 @@ from cogs import events
 from cogs import settings
 from cogs import remove
 from cogs import add
+import discord
 from discord.ext import commands
 import os
 import models
@@ -18,7 +19,8 @@ def getToken():
     return os.environ['TOKEN']
 
 
-bot = commands.Bot(command_prefix=getPrefix, case_insensitive='True')
+bot = commands.Bot(command_prefix=getPrefix,
+                   case_insensitive='True', help_command=None)
 
 
 if __name__ == '__main__':
@@ -27,4 +29,6 @@ if __name__ == '__main__':
     bot.add_cog(add.Add(bot))
     bot.add_cog(remove.Remove(bot))
     bot.add_cog(settings.Settings(bot))
+    bot.activity = discord.Activity(type=discord.ActivityType.watching,
+                                    name='you')
     bot.run(getToken())

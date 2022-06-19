@@ -10,15 +10,15 @@ class guild(base):
     channels = MutableList.as_mutable(Column(JSON, nullable=False, default=[]))
     newchannels = MutableDict.as_mutable(
         Column(JSON, nullable=False, default={}))
-    roomcategory = Column(Integer, nullable=True)
+    roomcat = Column(Integer, nullable=True)
     roomname = Column(String(50), nullable=False, default='%USERNAME%\'s Room')
 
-    def __init__(self, id, prefix, channels, new_channels, roomcategory, roomname):
+    def __init__(self, id, prefix, channels, new_channels, roomcat, roomname):
         self.id = id
         self.prefix = prefix
         self.channels = channels
         self.new_channels = new_channels
-        self.roomcategory = roomcategory
+        self.roomcat = roomcat
         self.roomname = roomname
 
     def __repr__(self):
@@ -31,6 +31,6 @@ class guild(base):
             'prefix': self.prefix,
             'channels': self.channels,
             'newchannels': self.newchannels,
-            'roomcategory': self.roomcategory,
+            'roomcat': self.roomcat,
             'roomname': self.roomname
         }
