@@ -3,3 +3,4 @@ bot/cogs/__pycache__
 bot/data/*
 bot/customrooms.py
 database
+.DS_Store
