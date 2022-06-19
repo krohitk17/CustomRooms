@@ -14,18 +14,18 @@ class Settings(commands.Cog):
             title='Ping', description=f'{int(self.bot.latency*100)} ms')
         await ctx.send(embed=embed)
 
-    @commands.command(name='help', description='List all commands. Use help [command] for specific command.', usage='help <command>')
+    @commands.command(name='help', description='List all commands. Use help <command> for specific command.', usage='help <command>')
     async def help(self, ctx, *args):
         embed = discord.Embed(title='Help')
         embed.color = discord.Colour.blue()
         if len(args) == 0:
             for command in self.bot.commands:
-                print(command.name, command.description)
-                embed.add_field(name=f'`{command.name}`',
-                                value=command.description, inline=False)
+                if command.hidden is False:
+                    embed.add_field(name=command.name,
+                                    value=command.description, inline=False)
         else:
             for command in self.bot.commands:
-                if command.name == args[0]:
+                if command.name == args[0] and command.hidden is False:
                     embed.add_field(name=f'`{command.name}`',
                                     value=command.description, inline=False)
                     embed.add_field(
