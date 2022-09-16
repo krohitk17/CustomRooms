@@ -16,7 +16,11 @@ def getPrefix(bot, message):
 
 
 def getToken():
-    return os.environ['TOKEN']
+    try:
+        return os.environ['TOKEN']
+    except:
+        print('Token Not Found!')
+        exit()
 
 
 bot = commands.Bot(command_prefix=getPrefix,

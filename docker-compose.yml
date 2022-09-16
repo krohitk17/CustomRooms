@@ -1,0 +1,12 @@
+version: "3.3"
+
+services:
+  customrooms:
+    image: customrooms
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./database:/Bot/database
+    environment:
+      - TOKEN=<your token>
