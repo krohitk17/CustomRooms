@@ -9,7 +9,8 @@ class guild(base):
     prefix = Column(String(5), nullable=False)
     channels = MutableList.as_mutable(Column(JSON, nullable=False, default=[]))
     newchannels = MutableDict.as_mutable(
-        Column(JSON, nullable=False, default={}))
+        Column(JSON, nullable=False, default={})
+    )
     roomcat = Column(Integer, nullable=True)
     roomname = Column(String(50), nullable=False, default='%USERNAME%\'s Room')
 

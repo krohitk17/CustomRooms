@@ -43,7 +43,12 @@ class Events(commands.Cog):
                     cat = after.channel.category
                 roomname = guild.roomname.replace(
                     '%USERNAME%', f'{member.name}')
-                ch = await member.guild.create_voice_channel(name=roomname, category=cat, overwrites=after.channel.overwrites, user_limit=after.channel.user_limit)
+                ch = await member.guild.create_voice_channel(
+                    name=roomname,
+                    category=cat,
+                    overwrites=after.channel.overwrites,
+                    user_limit=after.channel.user_limit
+                )
                 guild.newchannels[str(ch.id)] = False
                 await member.move_to(ch)
             if str(after.channel.id) in guild.newchannels.keys():
